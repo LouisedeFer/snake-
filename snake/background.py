@@ -29,19 +29,28 @@ def jeu() :
 
     clock = pygame.time.Clock()
 
-    while True:
+    #on initialise pour sortir du jeu correctement entre autres
+    game=True
+    while game==True:
 
-        clock.tick(1)
+        clock.tick(20)
+
 
         for event in pygame.event.get():
-            pass
+            if event.type == pygame.QUIT:
+                game=False
+            if event.type == pygame.KEYDOWN : #on precise qu'il s'agit d'un evnt qui concerne le clavier
+                if event.key ==pygame.K_q :
+                    game=False
 
+        
+        #bien laisser la boucle d'evnt avant d'afficher
         screen.fill( (0, 0, 0 ))
 
-        pygame.display.update()
+        pygame.display.update() #afficher a la fin
 
 
-pygame.quit()
+    pygame.quit()
 
 
 
