@@ -15,5 +15,5 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 hello = "snake.main:hello"
-
+jeu="snake.background:jeu"
 
