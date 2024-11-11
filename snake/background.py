@@ -2,6 +2,8 @@ import pygame
 # Initialiser le module
 import argparse
 #Sert a donner des instructions
+
+
 DEFAULT_LINES=12 #Nombre de lignes par defaut
 DEFAULT_COLUMNS=20 #Nombre de colonnes par defaut
 DEFAULT_SIZE= 50# Taille du carre par defaut
@@ -10,6 +12,8 @@ SNAKE=[3,1]
 
 #MIN_H=100 ; MAX_H=700
 #MIN_W=200 ; MAX_W=800
+
+
 
 # lancer le jeu : donner les arguments : poetry run jeu -H valeur -W valeur
 def argu() :
@@ -29,7 +33,9 @@ def argu() :
 
 def tracer_noir(screen,size) :
     args=argu()
+
     color = (0, 0, 0) #on part d"un ecran blanc et on va tracer les carres noirs
+
     for i in range (args.columns) : #on parcourt les colonnes
         for j in range(args.lines) : #on parcourt les lignes
             if (i+j)%2==0 : 
