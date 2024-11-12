@@ -103,9 +103,9 @@ def jeu_bis() :
     color_1=(0,0,0)
     colors_2=(255,255,255)
 
-    columns=40
-    lines=30
-    size=20
+    columns=20
+    lines=15
+    size=30
 
     hauteur=lines*size
     largeur=columns*size
