@@ -59,15 +59,16 @@ class Tiles:
     
 class Snake:
 
-    def __init__(self, color, size, line, column) :
+    def __init__(self, color, line, column, taille, square_size) :
         self.color=color
-        self.size=size
         self.line=line
-                 
+        self.column=column
+        self.taille=taille # prend une liste avec largeur et hauteur (toujours 1)
+        self.square_size=square_size
+    
+    def draw(self, screen) :
+        sna=pygame.Rect(self.column*self.square_size,self.line*self.square_size,self.taille[0]*self.square_size, self.taille[1]*self.square_size )
+        pygame.draw.rect(screen, self.color, sna)        
 
 
-def tracer_snake(screen, snake, lines, columns, size) : #prend en argument le screen, le tuple de la taille du serpent, sa ligne de depart et sa ligne d'arrivee
-    sna=pygame.Rect(columns*size, lines*size,snake[0]*size, snake[1]*size )
 
-    color=(0,255,0)
-    pygame.draw.rect(screen, color, sna)

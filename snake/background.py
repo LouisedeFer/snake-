@@ -3,7 +3,7 @@ import pygame
 import argparse
 #Sert a donner des instructions
 
-from .classes import CheckerBoard
+from .classes import CheckerBoard, Snake
 
 DEFAULT_LINES=12 #Nombre de lignes par defaut
 DEFAULT_COLUMNS=20 #Nombre de colonnes par defaut
@@ -103,16 +103,22 @@ def jeu_bis() :
     color_1=(0,0,0)
     colors_2=(255,255,255)
 
-    columns=50
-    lines=40
-    size=5
+    columns=40
+    lines=30
+    size=20
 
     hauteur=lines*size
     largeur=columns*size
 
+    color_sna=(0,255,0)
+    l_dep_sna=10
+    c_dep_sna=5
+    taille_sna=[3,1]
+
     screen = pygame.display.set_mode( (hauteur, largeur) )
 
     MyCheckerBoard=CheckerBoard(color_1,colors_2,columns,lines,size)
+    MySnake=Snake(color_sna,l_dep_sna,c_dep_sna,taille_sna, size)
 
     
  
@@ -144,6 +150,7 @@ def jeu_bis() :
         #bien laisser la boucle d'evnt avant d'afficher
 
         MyCheckerBoard.tracer(screen)
+        MySnake.draw(screen)
     
 
 
