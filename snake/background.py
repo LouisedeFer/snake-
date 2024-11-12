@@ -3,6 +3,7 @@ import pygame
 import argparse
 #Sert a donner des instructions
 
+from .classes import CheckerBoard
 
 DEFAULT_LINES=12 #Nombre de lignes par defaut
 DEFAULT_COLUMNS=20 #Nombre de colonnes par defaut
@@ -12,7 +13,6 @@ SNAKE=[3,1]
 
 #MIN_H=100 ; MAX_H=700
 #MIN_W=200 ; MAX_W=800
-
 
 
 # lancer le jeu : donner les arguments : poetry run jeu -H valeur -W valeur
@@ -60,6 +60,7 @@ def jeu() :
     
 
 
+
     pygame.init()
 
     screen = pygame.display.set_mode( (hauteur, largeur) )
@@ -96,6 +97,60 @@ def jeu() :
 
     pygame.quit()
 
+
+def jeu_bis() : 
+    
+    color_1=(0,0,0)
+    colors_2=(255,255,255)
+
+    columns=50
+    lines=40
+    size=5
+
+    hauteur=lines*size
+    largeur=columns*size
+
+    screen = pygame.display.set_mode( (hauteur, largeur) )
+
+    MyCheckerBoard=CheckerBoard(color_1,colors_2,columns,lines,size)
+
+    
+ 
+
+    pygame.init()
+
+    
+
+    pygame.display.set_caption("Ecran de jeu")
+
+    clock = pygame.time.Clock()
+
+    #on initialise pour sortir du jeu correctement entre autres
+    game=True
+    while game==True:
+
+        clock.tick(20)
+
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                game=False
+            if event.type == pygame.KEYDOWN : #on precise qu'il s'agit d'un evnt qui concerne le clavier
+                if event.key ==pygame.K_q :
+                    game=False
+
+        
+        
+        #bien laisser la boucle d'evnt avant d'afficher
+
+        MyCheckerBoard.tracer(screen)
+    
+
+
+        pygame.display.update() #afficher a la fin
+
+
+    pygame.quit()
 
 
 
