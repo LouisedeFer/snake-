@@ -15,7 +15,7 @@ SNAKE=[3,1]
 #MIN_W=200 ; MAX_W=800
 
 
-# lancer le jeu : donner les arguments : poetry run jeu -H valeur -W valeur
+# lancer le jeu : donner les arguments : poetry run jeu -L valeur -C valeur
 def argu() :
     parser = argparse.ArgumentParser(description='Width and height of the screen')
     parser.add_argument('-L','--lines', type=int, default=DEFAULT_LINES,  help="Screen wight (number of columns)")
@@ -111,6 +111,7 @@ def jeu_bis() :
     largeur=columns*size
 
     color_sna=(0,255,0)
+    color_head=(255,0,0)
     l_dep_sna=10
     c_dep_sna=5
     taille_sna=[3,1]
@@ -118,7 +119,7 @@ def jeu_bis() :
     screen = pygame.display.set_mode( (hauteur, largeur) )
 
     MyCheckerBoard=CheckerBoard(color_1,colors_2,columns,lines,size)
-    MySnake=Snake(color_sna,l_dep_sna,c_dep_sna,taille_sna, size)
+    MySnake=Snake(color_sna,color_head,l_dep_sna,c_dep_sna,taille_sna, size)
 
     
  

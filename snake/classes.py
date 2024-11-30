@@ -59,16 +59,19 @@ class Tiles:
     
 class Snake:
 
-    def __init__(self, color, line, column, taille, square_size) :
+    def __init__(self, color, color_head,line, column, taille, square_size) : #on met une couleur differente pour le corps et la tête
         self.color=color
+        self.color_head=color_head
         self.line=line
         self.column=column
         self.taille=taille # prend une liste avec largeur et hauteur (toujours 1)
         self.square_size=square_size
     
-    def draw(self, screen) :
-        sna=pygame.Rect(self.column*self.square_size,self.line*self.square_size,self.taille[0]*self.square_size, self.taille[1]*self.square_size )
-        pygame.draw.rect(screen, self.color, sna)        
+    def draw(self, screen) : #on va différentier le corps et la tête
+        sna=pygame.Rect((self.column+1)*self.square_size,self.line*self.square_size,(self.taille[0]-1)*self.square_size, self.taille[1]*self.square_size )
+        head=pygame.Rect(self.column*self.square_size,self.line*self.square_size,self.square_size,self.square_size)
+        pygame.draw.rect(screen, self.color, sna)  
+        pygame.draw.rect(screen,self.color_head,head )    
 
 
 
