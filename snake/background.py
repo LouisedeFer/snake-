@@ -111,15 +111,16 @@ def jeu_bis() :
     largeur=columns*size
 
     color_sna=(0,255,0)
-    color_head=(255,0,0)
-    l_dep_sna=10
-    c_dep_sna=5
-    taille_sna=[3,1]
+    color_head=(0,0,255)
+    l_sna=10 # ligne de départ du snake
+    c_sna=5 # colonne de départ (position de la tête)
+    #taille_sna=[3,1]
+    taille_sna=5
 
     screen = pygame.display.set_mode( (hauteur, largeur) )
 
     MyCheckerBoard=CheckerBoard(color_1,colors_2,columns,lines,size)
-    MySnake=Snake(color_sna,color_head,l_dep_sna,c_dep_sna,taille_sna, size)
+    MySnake=Snake(color_sna,color_head,l_sna,c_sna,taille_sna, size)
 
     
  
@@ -145,6 +146,14 @@ def jeu_bis() :
             if event.type == pygame.KEYDOWN : #on precise qu'il s'agit d'un evnt qui concerne le clavier
                 if event.key ==pygame.K_q :
                     game=False
+                if event.key==pygame.K_RIGHT :
+                    MySnake.move_right(screen, lines)
+                if event.key == pygame.K_LEFT :
+                    MySnake.move_left(screen) 
+                if event.key == pygame.K_UP :
+                    MySnake.move_up(screen)
+                if event.key == pygame.K_DOWN :
+                    MySnake.move_down(screen,columns)   
 
         
         
