@@ -3,7 +3,7 @@ import pygame
 import argparse
 #Sert a donner des instructions
 
-from .classes import CheckerBoard, Snake
+from .classes import CheckerBoard, Snake, Tiles
 
 DEFAULT_LINES=12 #Nombre de lignes par defaut
 DEFAULT_COLUMNS=20 #Nombre de colonnes par defaut
@@ -117,10 +117,24 @@ def jeu_bis() :
     #taille_sna=[3,1]
     taille_sna=5
 
+
+    color_fruit=(255,0,0)
+    col_fruit_1=3
+    line_fruit_1=3
+    col_fruit_2=15
+    line_fruit_2=10
+
+
     screen = pygame.display.set_mode( (hauteur, largeur) )
 
     MyCheckerBoard=CheckerBoard(color_1,colors_2,columns,lines,size)
     MySnake=Snake(color_sna,color_head,l_sna,c_sna,taille_sna, size)
+
+    direction = 'LEFT' # le serpent va commencer par se déplacer vers la gauche
+
+
+    Myfruit=Tiles(color_fruit,size, col_fruit_1,line_fruit_1) # on commence par placer le fruit
+
 
     
  
@@ -137,7 +151,7 @@ def jeu_bis() :
     game=True
     while game==True:
 
-        clock.tick(20)
+        clock.tick(5)
 
 
         for event in pygame.event.get():
@@ -148,19 +162,34 @@ def jeu_bis() :
                     game=False
                 if event.key==pygame.K_RIGHT :
                     MySnake.move_right(screen, lines)
+                    direction='RIGHT'
+                    MySnake.fruit_meeting(screen, Myfruit, color_fruit, col_fruit_1, line_fruit_1, col_fruit_2, line_fruit_2)
                 if event.key == pygame.K_LEFT :
                     MySnake.move_left(screen) 
+                    direction='LEFT'
+                    MySnake.fruit_meeting(screen, Myfruit, color_fruit, col_fruit_1, line_fruit_1, col_fruit_2, line_fruit_2)
                 if event.key == pygame.K_UP :
                     MySnake.move_up(screen)
+                    direction='UP'
+                    MySnake.fruit_meeting(screen, Myfruit, color_fruit, col_fruit_1, line_fruit_1, col_fruit_2, line_fruit_2)
                 if event.key == pygame.K_DOWN :
-                    MySnake.move_down(screen,columns)   
+                    MySnake.move_down(screen,columns) 
+                    direction = 'DOWN'
+                    MySnake.fruit_meeting(screen, Myfruit, color_fruit, col_fruit_1, line_fruit_1, col_fruit_2, line_fruit_2)  
 
         
         
         #bien laisser la boucle d'evnt avant d'afficher
+        
 
         MyCheckerBoard.tracer(screen)
         MySnake.draw(screen)
+
+        MySnake.move_global(direction, screen, columns, lines)
+        Myfruit.draw(screen)
+
+    
+
     
 
 

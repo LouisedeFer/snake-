@@ -29,7 +29,6 @@ class CheckerBoard :
 
 
 
-
         
 
 class Tiles:
@@ -77,6 +76,27 @@ class Snake:
             pygame.draw.rect(screen, self.color, pos)  
         
     
+    def fruit_meeting(self, screen, fruit, color_fruit, col_1, line_1, col_2, line_2) :
+
+        if self.positions[0]==[line_1, col_1] and fruit== Tiles(color_fruit,self.square_size, col_1,line_1):
+            fruit=Tiles(color_fruit, self.square_size,col_2,line_2)
+            fruit.draw(screen)
+            self.positions.append([self.positions[-1][0]+1, self.positions[-1][1]])
+            self.draw(screen)
+        
+        if self.positions[0]==[line_2, col_2] and fruit== Tiles(color_fruit,self.square_size, col_2,line_2):
+            fruit=Tiles(color_fruit, self.square_size,col_1, line_1)
+            fruit.draw(screen)
+            self.positions.append([self.positions[-1][0]-1, self.positions[-1][1]])# on est parti du principe qu'on
+            # arrivait en colonne à chaque fois, à modifier
+            self.draw(screen)
+
+            
+
+
+
+
+
 
     def move_up (self, screen) :
         li_init=10
@@ -292,6 +312,17 @@ class Snake:
 
         self.draw(screen)
 
+
+
+    def move_global(self, direction, screen, columns, lines) :
+        if direction=='RIGHT' :
+            self.move_right(screen, columns)
+        if direction == 'LEFT' :
+            self.move_left(screen) 
+        if direction == 'UP' :
+            self.move_up(screen)
+        if direction== 'DOWN' :
+            self.move_down(screen, lines)
 
         
 
