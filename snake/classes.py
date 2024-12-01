@@ -68,6 +68,10 @@ class Snake:
         #on commence par placer le serpent à l'horizontale toujours donc seules les valeurs des colonnes changent
     
 
+    def __contains__(self, fruit) : # on testera if fruit in snake
+       return (fruit==self.positions[0])
+
+
     def draw(self, screen) : #on va différentier le corps et la tête pour des questions de couleur
         head=pygame.Rect(self.positions[0][1]*self.square_size,self.positions[0][0]*self.square_size,self.square_size,self.square_size)
         pygame.draw.rect(screen,self.color_head,head )
@@ -75,28 +79,19 @@ class Snake:
             pos=pygame.Rect(self.positions[j][1]*self.square_size,self.positions[j][0]*self.square_size,self.square_size,self.square_size)
             pygame.draw.rect(screen, self.color, pos)  
         
-    
-    def fruit_meeting(self, screen, fruit, color_fruit, col_1, line_1, col_2, line_2) :
+    def grow(self, direction) :
+        if direction=='DOWN' :
+            self.positions.append([self.positions[-1][0], self.positions[-1][1]+1])
+        if direction=='UP' :
+            self.positions.append([self.positions[-1][0], self.positions[-1][1]-1])
+        if direction=='RIGHT' :
+            self.positions.append([self.positions[-1][0], self.positions[-1][1]+1])
+        if direction =='LEFT' :
+            self.positions.append([self.positions[-1][0], self.positions[-1][1]-1])
 
-        if self.positions[0]==[line_1, col_1] and fruit== Tiles(color_fruit,self.square_size, col_1,line_1):
-            fruit=Tiles(color_fruit, self.square_size,col_2,line_2)
-            fruit.draw(screen)
-            self.positions.append([self.positions[-1][0]+1, self.positions[-1][1]])
-            self.draw(screen)
         
-        if self.positions[0]==[line_2, col_2] and fruit== Tiles(color_fruit,self.square_size, col_2,line_2):
-            fruit=Tiles(color_fruit, self.square_size,col_1, line_1)
-            fruit.draw(screen)
-            self.positions.append([self.positions[-1][0]-1, self.positions[-1][1]])# on est parti du principe qu'on
-            # arrivait en colonne à chaque fois, à modifier
-            self.draw(screen)
 
-            
-
-
-
-
-
+## Snake's move
 
     def move_up (self, screen) :
         li_init=10
@@ -152,7 +147,6 @@ class Snake:
         self.column=self.positions[0][1]
 
         self.draw(screen)
-    
 
 
     def move_down (self, screen, lines) :
@@ -208,8 +202,6 @@ class Snake:
         self.column=self.positions[0][1]
 
         self.draw(screen)
-
-
 
 
     def move_right (self, screen, columns) :
@@ -324,11 +316,32 @@ class Snake:
         if direction== 'DOWN' :
             self.move_down(screen, lines)
 
-        
+
+
+class Fruit :
+
+    def __init__(self, color_fruit, col, line,size) :
+        self.color_fruit=color_fruit
+        self.col=col
+        self.line=line
+        self.size=size
+    
+    def draw(self, screen) :
+        fruit=Tiles(self.color_fruit, self.size, self.col, self.line)
+        fruit.draw(screen)
+    
+    def collusion(self, snake, pos_1, pos_2, screen, direction, score) :
+        if [self.line, self.col] in snake :
+            if [self.line, self.col]==pos_1 :
+                [self.line, self.col]=pos_2
+            else :
+                [self.line, self.col]=pos_1
+
+            score+=1
+            snake.grow(direction)
+            self.draw(screen)
+        return score
 
 
 
-
-
-
-
+    
