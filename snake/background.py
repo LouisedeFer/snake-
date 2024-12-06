@@ -45,7 +45,7 @@ def tracer_snake(screen, snake, lines, columns, size) : #prend en argument le sc
     color=(0,255,0)
     pygame.draw.rect(screen, color, sna)
 
-def jeu() : 
+def jeu() :  # plus utile maintenant
     args=argu()
 
     size=args.square_size

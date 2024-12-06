@@ -16,8 +16,6 @@ class CheckerBoard :
     #la fonction pour tracer
     def tracer(self, screen) : #tracer le checkerboard
 
-        hauteur=self.nb_lines*self.size_square
-        largeur=self.nb_columns*self.size_square
 
         screen.fill( self.color_1)
 
@@ -79,7 +77,7 @@ class Snake:
             pos=pygame.Rect(self.positions[j][1]*self.square_size,self.positions[j][0]*self.square_size,self.square_size,self.square_size)
             pygame.draw.rect(screen, self.color, pos)  
         
-    def grow(self, direction) :
+    def grow(self, direction) : # plus utile maintenant 
         if direction=='DOWN' :
             self.positions.append([self.positions[-1][0], self.positions[-1][1]+1])
         if direction=='UP' :
@@ -89,8 +87,6 @@ class Snake:
         if direction =='LEFT' :
             self.positions.append([self.positions[-1][0]-1, self.positions[-1][1]])
 
-    def diminish(self) :
-        self.positions.pop()
     
 
         
@@ -316,6 +312,7 @@ class Snake:
         self.draw(screen)
         return score
 
+# On propose une version beaucoup plus optimisée : 
 
     def move_up_bis(self, screen, score, fruit) :
         li_init=10
