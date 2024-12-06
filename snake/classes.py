@@ -69,7 +69,7 @@ class Snake:
     
 
     def __contains__(self, fruit) : # on testera if fruit in snake
-       return (fruit==self.positions[0])
+       return fruit==self.positions[0]
 
 
     def draw(self, screen) : #on va différentier le corps et la tête pour des questions de couleur
@@ -91,6 +91,7 @@ class Snake:
 
     def diminish(self) :
         self.positions.pop()
+    
 
         
 
@@ -154,7 +155,6 @@ class Snake:
         self.draw(screen)
         return score
 
-
     def move_down (self, screen, lines, score) :
         li_init=10
         col_init=5 #on initialise une ligne de départ
@@ -210,7 +210,6 @@ class Snake:
 
         self.draw(screen)
         return score
-
 
     def move_right (self, screen, columns, score) :
         li_init=10
@@ -318,19 +317,101 @@ class Snake:
         return score
 
 
-
+    def move_up_bis(self, screen, score, fruit) :
+        li_init=10
+        col_init=5 #on initialise une ligne de départ
+        taille_init=3# on revient à la taille normale
+        #il faut vérifier que la tête ne touche pas le haut
+        # ensuite il faut changer la valeur de la ligne (self.line)en lui ajoutant 1 :
+        # on va reinitiliser MySnake en changeant la valeur de la 
+        # ligne puis le retracer dans le programme global
+        if self.positions[0][0] ==0 : #si on est déjà sur la dernière ligne
+            self.positions=[[li_init,col_init+i] for i in range (taille_init)] # on renvient au début
+            self.draw(screen)
+            score=0 #remettre le score à 0 si on touche les bords
+        else : 
+            self.positions.insert(0, [self.positions[0][0]-1, self.positions[0][1]])
+            self.line=self.positions[0][0]
+            self.column=self.positions[0][1]
+            if self.positions[0] not in fruit : 
+                self.positions.pop()
+            self.draw(screen)
+        return score
+    
+    def move_down_bis(self, screen, lines, score, fruit) :
+        li_init=10
+        col_init=5 #on initialise une ligne de départ
+        taille_init=3# on revient à la taille normale
+        #il faut vérifier que la tête ne touche pas le bas
+        # ensuite il faut changer la valeur de la ligne (self.line)en lui ajoutant 1 :
+        # on va reinitiliser MySnake en changeant la valeur de la 
+        # ligne puis le retracer dans le programme global
+        if self.positions[0][0] ==lines : #si on est déjà sur la dernière ligne
+            self.positions=[[li_init,col_init+i] for i in range (taille_init)] # on renvient au début
+            self.draw(screen)
+            score=0 #remettre le score à 0 si on touche les bords
+        else : 
+            self.positions.insert(0, [self.positions[0][0]+1, self.positions[0][1]] )
+            self.line=self.positions[0][0]
+            self.column=self.positions[0][1]
+            if self.positions[0] not in fruit : 
+                self.positions.pop()
+            self.draw(screen)
+        return score
+    
+    def move_left_bis(self, screen, score, fruit) :
+        li_init=10
+        col_init=5 #on initialise une ligne de départ
+        taille_init=3# on revient à la taille normale
+        #il faut vérifier que la tête ne touche pas le bord gauche
+        # ensuite il faut changer la valeur de la ligne (self.line)en lui ajoutant 1 :
+        # on va reinitiliser MySnake en changeant la valeur de la 
+        # ligne puis le retracer dans le programme global
+        if self.positions[0][1] ==0 : #si on est déjà sur la ptrmiètr colonne
+            self.positions=[[li_init,col_init+i] for i in range (taille_init)] # on renvient au début
+            self.draw(screen)
+            score=0 #remettre le score à 0 si on touche les bords
+        else : 
+            self.positions.insert(0, [self.positions[0][0], self.positions[0][1]-1])
+            self.line=self.positions[0][0]
+            self.column=self.positions[0][1]
+            if self.positions[0] not in fruit : 
+                self.positions.pop()        
+            self.draw(screen)
+        return score
+    
+    def move_right_bis(self, screen, columns, score, fruit) :
+        li_init=10
+        col_init=5 #on initialise une ligne de départ
+        taille_init=3# on revient à la taille normale
+        #il faut vérifier que la tête ne touche pas le bord droit
+        # ensuite il faut changer la valeur de la ligne (self.line)en lui ajoutant 1 :
+        # on va reinitiliser MySnake en changeant la valeur de la 
+        # ligne puis le retracer dans le programme global
+        if self.positions[0][0] ==columns : #si on est déjà sur la dernière colonne
+            self.positions=[[li_init,col_init+i] for i in range (taille_init)] # on renvient au début
+            self.draw(screen)
+            score=0 #remettre le score à 0 si on touche les bords
+        else : 
+            self.positions.insert(0, [self.positions[0][0], self.positions[0][1]+1])
+            self.line=self.positions[0][0]
+            self.column=self.positions[0][1]
+            if self.positions[0] not in fruit : 
+                self.positions.pop()
+            self.draw(screen)
+        return score
     
                               
 
-    def move_global(self, direction, screen, columns, lines, score) :
+    def move_global(self, direction, screen, columns, lines, score, fruit) :
         if direction=='RIGHT' :
-            self.move_right(screen, columns, score)
+            self.move_right_bis(screen, columns, score, fruit)
         if direction == 'LEFT' :
-            self.move_left(screen, score) 
+            self.move_left_bis(screen, score, fruit) 
         if direction == 'UP' :
-            self.move_up(screen, score)
+            self.move_up_bis(screen, score, fruit)
         if direction== 'DOWN' :
-            self.move_down(screen, lines, score)
+            self.move_down_bis(screen, lines, score, fruit)
 
 
 
@@ -342,11 +423,14 @@ class Fruit :
         self.line=line
         self.size=size
     
+    def __contains__(self, snake) : # on testera if snake in fruit
+       return snake==[self.line, self.col]
+    
     def draw(self, screen) :
         fruit=Tiles(self.color_fruit, self.size, self.col, self.line)
         fruit.draw(screen)
     
-    def collusion(self, snake, pos_1, pos_2, screen, direction,score) :
+    def collusion(self, snake, pos_1, pos_2, screen,score) :
         if [self.line, self.col] in snake :
             if [self.line, self.col]==pos_1 :
                 [self.line, self.col]=pos_2
@@ -354,8 +438,10 @@ class Fruit :
                 [self.line, self.col]=pos_1
 
             score+=1
-            snake.grow(direction)
+            #snake.grow(direction)
             self.draw(screen)
+        
+
         return score
     
 

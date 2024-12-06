@@ -143,7 +143,7 @@ def jeu_bis() :
     pygame.init()
 
 
-    pygame.display.set_caption("Ecran de jeu")
+    pygame.display.set_caption(f"Ecran de jeu {score}")
 
 
 
@@ -166,22 +166,22 @@ def jeu_bis() :
                 
 
                 if event.key==pygame.K_RIGHT :
-                    score=MySnake.move_right(screen, lines, score) #remettre le score à 0 si on touche les bords
+                    score=MySnake.move_right_bis(screen, lines, score, Myfruit) #remettre le score à 0 si on touche les bords
                     direction='RIGHT'
                     break # permet de ne pas appuyer sur plusieurs touches
                     
                 if event.key == pygame.K_LEFT :
-                    score=MySnake.move_left(screen, score) 
+                    score=MySnake.move_left_bis(screen, score, Myfruit) 
                     direction='LEFT'
                     break
                     
                 if event.key == pygame.K_UP :
-                    score=MySnake.move_up(screen, score)
+                    score=MySnake.move_up_bis(screen, score, Myfruit)
                     direction='UP'
                     break
                    
                 if event.key == pygame.K_DOWN :
-                    score=MySnake.move_down(screen,columns, score) 
+                    score=MySnake.move_down_bis(screen,columns, score, Myfruit) 
                     direction = 'DOWN'
                     break
    
@@ -195,8 +195,8 @@ def jeu_bis() :
         MySnake.draw(screen)
         Myfruit.draw(screen)
 
-        MySnake.move_global(direction, screen, columns, lines, score)
-        score=Myfruit.collusion(MySnake, pos_fruit_1, pos_fruit_2, screen, direction, score)
+        MySnake.move_global(direction, screen, columns, lines, score, Myfruit)
+        score=Myfruit.collusion(MySnake, pos_fruit_1, pos_fruit_2, screen, score)
 
         display_score(screen, score)
 
