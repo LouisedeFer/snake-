@@ -85,15 +85,18 @@ class Snake:
         if direction=='UP' :
             self.positions.append([self.positions[-1][0], self.positions[-1][1]-1])
         if direction=='RIGHT' :
-            self.positions.append([self.positions[-1][0], self.positions[-1][1]+1])
+            self.positions.append([self.positions[-1][0]+1, self.positions[-1][1]])
         if direction =='LEFT' :
-            self.positions.append([self.positions[-1][0], self.positions[-1][1]-1])
+            self.positions.append([self.positions[-1][0]-1, self.positions[-1][1]])
+
+    def diminish(self) :
+        self.positions.pop()
 
         
 
 ## Snake's move
 
-    def move_up (self, screen) :
+    def move_up (self, screen, score) :
         li_init=10
         col_init=5 #on initialise une ligne et une colonne de départ
         taille_init=3# on revient à la taille normale
@@ -102,6 +105,8 @@ class Snake:
         if self.positions[0][0] == 0 : #si on est déjà sur la première ligne
             self.positions=[[li_init,col_init+i] for i in range (taille_init)] # on renvient au début
             self.draw(screen)
+            score=0
+
             
         else :
             indice=0
@@ -147,9 +152,10 @@ class Snake:
         self.column=self.positions[0][1]
 
         self.draw(screen)
+        return score
 
 
-    def move_down (self, screen, lines) :
+    def move_down (self, screen, lines, score) :
         li_init=10
         col_init=5 #on initialise une ligne de départ
         taille_init=3# on revient à la taille normale
@@ -160,6 +166,7 @@ class Snake:
         if self.positions[0][0] == lines : #si on est déjà sur la dernière ligne
             self.positions=[[li_init,col_init+i] for i in range (taille_init)] # on renvient au début
             self.draw(screen)
+            score=0 #remettre le score à 0 si on touche les bords
         
         else :
             indice=0
@@ -202,9 +209,10 @@ class Snake:
         self.column=self.positions[0][1]
 
         self.draw(screen)
+        return score
 
 
-    def move_right (self, screen, columns) :
+    def move_right (self, screen, columns, score) :
         li_init=10
         col_init=5 #on initialise une ligne et une colonne de départ
         taille_init=3# on revient à la taille normale
@@ -215,6 +223,7 @@ class Snake:
         if self.column == columns-1 : #si on est déjà sur la dernière colonne 
             self.positions=[[li_init,col_init+i] for i in range (taille_init)] # on renvient au début
             self.draw(screen)
+            score=0
         else :
             indice=0
             for j in range(1,len(self.positions)) : # on va regarder si le serpent est sur une unique colonne ou non
@@ -253,8 +262,9 @@ class Snake:
         self.column=self.positions[0][1]
 
         self.draw(screen)
+        return score
 
-    def move_left (self, screen) :
+    def move_left (self, screen, score) :
         li_init=10
         col_init=5 #on initialise une ligne et une colonne de départ
         taille_init=3# on revient à la taille normale
@@ -265,6 +275,8 @@ class Snake:
         if self.column == 0 : #si on est déjà sur la première colonne 
             self.positions=[[li_init,col_init+i] for i in range (taille_init)] # on renvient au début
             self.draw(screen)
+            score=0
+            
         else :
             indice=0
             for j in range(1,len(self.positions)) : # on va regarder si le serpent est sur une unique colonne ou non
@@ -303,18 +315,22 @@ class Snake:
         self.column=self.positions[0][1]
 
         self.draw(screen)
+        return score
 
 
 
-    def move_global(self, direction, screen, columns, lines) :
+    
+                              
+
+    def move_global(self, direction, screen, columns, lines, score) :
         if direction=='RIGHT' :
-            self.move_right(screen, columns)
+            self.move_right(screen, columns, score)
         if direction == 'LEFT' :
-            self.move_left(screen) 
+            self.move_left(screen, score) 
         if direction == 'UP' :
-            self.move_up(screen)
+            self.move_up(screen, score)
         if direction== 'DOWN' :
-            self.move_down(screen, lines)
+            self.move_down(screen, lines, score)
 
 
 
@@ -330,7 +346,7 @@ class Fruit :
         fruit=Tiles(self.color_fruit, self.size, self.col, self.line)
         fruit.draw(screen)
     
-    def collusion(self, snake, pos_1, pos_2, screen, direction, score) :
+    def collusion(self, snake, pos_1, pos_2, screen, direction,score) :
         if [self.line, self.col] in snake :
             if [self.line, self.col]==pos_1 :
                 [self.line, self.col]=pos_2
@@ -341,6 +357,8 @@ class Fruit :
             snake.grow(direction)
             self.draw(screen)
         return score
+    
+
 
 
 

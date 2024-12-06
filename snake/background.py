@@ -92,12 +92,14 @@ def jeu() :
     pygame.quit()
 
 ## Meilleure version du jeu 
+
 # Function to display the score
 
 def display_score(screen, score):
     font = pygame.font.Font(None, 40)  # Default font and size
     score_surface = font.render(f'Score: {score}', True, (255, 0, 0))
     screen.blit(score_surface, (10, 10))  # Draw score at (10,10)
+
 
 
 def jeu_bis() : 
@@ -164,20 +166,24 @@ def jeu_bis() :
                 
 
                 if event.key==pygame.K_RIGHT :
-                    MySnake.move_right(screen, lines)
+                    score=MySnake.move_right(screen, lines, score) #remettre le score à 0 si on touche les bords
                     direction='RIGHT'
+                    break # permet de ne pas appuyer sur plusieurs touches
                     
                 if event.key == pygame.K_LEFT :
-                    MySnake.move_left(screen) 
+                    score=MySnake.move_left(screen, score) 
                     direction='LEFT'
+                    break
                     
                 if event.key == pygame.K_UP :
-                    MySnake.move_up(screen)
+                    score=MySnake.move_up(screen, score)
                     direction='UP'
+                    break
                    
                 if event.key == pygame.K_DOWN :
-                    MySnake.move_down(screen,columns) 
+                    score=MySnake.move_down(screen,columns, score) 
                     direction = 'DOWN'
+                    break
    
 
         
@@ -189,7 +195,7 @@ def jeu_bis() :
         MySnake.draw(screen)
         Myfruit.draw(screen)
 
-        MySnake.move_global(direction, screen, columns, lines)
+        MySnake.move_global(direction, screen, columns, lines, score)
         score=Myfruit.collusion(MySnake, pos_fruit_1, pos_fruit_2, screen, direction, score)
 
         display_score(screen, score)
