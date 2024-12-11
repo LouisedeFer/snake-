@@ -1,98 +1,150 @@
 
 import pygame
+import abc 
+
+from enum import Enum
+
+class Board :
+
+    def __init__(self, screen, tile_size) : # on va devoir dessiner donc on rentre un screen
+        self._screen=screen
+        self._tile_size=tile_size
+        self._object=[]
+    
+
+    def draw(self) :
+        for obj in self._object :
+            for tile in obj.tiles:
+                tile.draw(self._screen,self._tile_size)
 
 
-class CheckerBoard :
+ 
+    def add_object(self, gameobject) :
+        self._object.append(gameobject)
 
+
+class GameObject(abc.ABC) :  # classe abstraite pour parler de tous les objets du jeu
+    # on definit le "contrat" que chaque classe GameObject doit avoir
+
+    def __init__(self) :
+        super().__init__()
+    
+    # on va creer une propriete tiles
+
+    @property # fait voir la fonction comme un attribut
+    @abc.abstractmethod # cette methode est une methode abstraite : elle n'a pas d'implementation
+    def tiles(self) :
+        raise NotImplementedError # tout objet heritant de gameobject doit definir une propriete utile
+
+
+class Dir(Enum) :
+    DOWN=(1,0)
+    UP=(-1,0)
+    LEFT=(0,-1)
+    RIGHT=(0,1)
+
+
+class Tile():
     #le constructeur
+    def __init__(self,row,column, color) :
+        self._color=color
+        #self.size=size pas utile car la taille est la meme pour tout le monde : on le met dans la classe Board
+        self._row=row
+        self._column=column
 
-    def __init__(self, color_1, color_2, nb_lines, nb_columns, size_square) :
-        self.color_1=color_1
-        self.color_2=color_2
-        self.nb_lines=nb_lines
-        self.nb_columns=nb_columns
-        self.size_square=size_square
     
-    #la fonction pour tracer
-    def tracer(self, screen) : #tracer le checkerboard
-
-
-        screen.fill( self.color_1)
-
-        for i in range(self.nb_columns) :
-            for j in range(self.nb_lines) :
-               if (i+j)%2==0 :
-                   tile=Tiles(self.color_2,self.size_square,i,j)
-                   tile.draw(screen)
-
-
-
-        
-
-class Tiles:
-    
-    #le constructeur
-    def __init__(self, color, size, top,left) :
-        self.color=color
-        self.size=size
-        self.top=top
-        self.left=left
-    
-    #l'afficheur
-
     def __repr__(self) :
-        return f"Les carreaus sont {self.color}, de taille {self.size} et de coordonnées {self.coordonates} "
+        return f'({self._row}, {self._column})'
     
-
+    @property
+    def coord(self) :
+        return (self._row, self._column)
     #tracer les cases
 
-    def draw(self, screen) :
-        rect = pygame.Rect(self.top*self.size, self.left*self.size, self.size, self.size)
-        pygame.draw.rect(screen, self.color, rect)
+    def draw(self, screen, tile_size) :
+        rect = pygame.Rect(self._column*tile_size, self._row*tile_size, tile_size, tile_size)
+        pygame.draw.rect(screen, self._color, rect)
+
+
+class CheckerBoard(GameObject) :  # noqa: D101
+
+    #le constructeur
+
+    def __init__(self, color_1, color_2, nb_rows, nb_columns) :
+        self._color_1=color_1
+        self._color_2=color_2
+        self._nb_rows=nb_rows
+        self._nb_columns=nb_columns
+        #self.size_square=size_square inutile a present
+    
+    #la fonction pour tracer
 
     
-class Snake:
+    @property
+    def tiles(self) :
+        for column in range(self._nb_columns) :
+            for row in range(self._nb_rows) :
+                yield(Tile(row=row, column=column, color=self._color_1 if (column+row)%2==0 else self._color_2))
 
-    def __init__(self, color, color_head,line, column, taille, square_size) : #on met une couleur differente pour le corps et la tête
-        self.color=color
-        self.color_head=color_head
-        self.line=line # ligne de la tête
-        self.column=column # colonne de la tête
+
+
+
+    
+class Snake(GameObject):
+
+    def __init__(self, color,row, column, size, direction) : #on met une couleur differente pour le corps et la tête
+        self._color=color
+        #self.color_head=color_head
+        self._row=row # line of the head
+        self._column=column # colonne de la tête
         #self.taille=taille # prend une liste avec largeur et hauteur (hauteur de 1 à l'origine)
-        self.taille=taille # prend la taille totale du serpent
-        self.square_size=square_size
-        self.positions=[[self.line, self.column+i] for i in range(self.taille)] # cette liste sert à quantifier les positions 
+        self._size=size # prend la taille totale du serpent
+        #self.square_size=square_size
+        self._positions=[[self._row, self._column+i] for i in range(self._size)] # cette liste sert à quantifier les positions 
         # du corps du serpent (utile pour le faire monter/descendre car la tête se désolidarise du corps)
         #on commence par placer le serpent à l'horizontale toujours donc seules les valeurs des colonnes changent
+        self._direction=direction
+        self._tiles=[Tile(p[0], p[1], color) for p in self._positions]
     
 
     def __contains__(self, fruit) : # on testera if fruit in snake
-       return fruit==self.positions[0]
+       return fruit==self._tiles[0].coord
 
 
-    def draw(self, screen) : #on va différentier le corps et la tête pour des questions de couleur
-        head=pygame.Rect(self.positions[0][1]*self.square_size,self.positions[0][0]*self.square_size,self.square_size,self.square_size)
-        pygame.draw.rect(screen,self.color_head,head )
-        for j in range(1,len(self.positions)) : # on trace le serpent carré par carré
-            pos=pygame.Rect(self.positions[j][1]*self.square_size,self.positions[j][0]*self.square_size,self.square_size,self.square_size)
-            pygame.draw.rect(screen, self.color, pos)  
-        
-    def grow(self, direction) : # plus utile maintenant 
-        if direction=='DOWN' :
-            self.positions.append([self.positions[-1][0], self.positions[-1][1]+1])
-        if direction=='UP' :
-            self.positions.append([self.positions[-1][0], self.positions[-1][1]-1])
-        if direction=='RIGHT' :
-            self.positions.append([self.positions[-1][0]+1, self.positions[-1][1]])
-        if direction =='LEFT' :
-            self.positions.append([self.positions[-1][0]-1, self.positions[-1][1]])
+    @property
+    def tiles (self) :
+        return(self._tiles)
+    
+    @property
+    def dir(self) :
+        return self._direction
+
+    @dir.setter
+    def dir(self, new_direction):
+        self._direction = new_direction
 
     
+     # making the snake move
+    def move(self, fruit, score, pos_1, pos_2):
+        # moving the head, the snake becomes one tile longer
+        x,y=self._tiles[0].coord
+        coord=(x + self._direction.value[0], y + self._direction.value[1])
+        self._tiles.insert(0, Tile(coord[0], coord[1], self._color))
+        if not fruit.coord in self :
+            self._tiles.pop()
+        else :
+            fruit.change(pos_1, pos_2)
+            score+=1
+        return score
+    
+            
+
+
 
         
 
 ## Snake's move
-
+'''#
     def move_up (self, screen, score) :
         li_init=10
         col_init=5 #on initialise une ligne et une colonne de départ
@@ -312,7 +364,7 @@ class Snake:
         self.draw(screen)
         return score
 
-# On propose une version beaucoup plus optimisée : 
+# On propose une version beaucoup plus optimisée :
 
     def move_up_bis(self, screen, score, fruit) :
         li_init=10
@@ -410,36 +462,35 @@ class Snake:
         if direction== 'DOWN' :
             self.move_down_bis(screen, lines, score, fruit)
 
+'''
+class Fruit(GameObject) :
 
+    def __init__(self, color_fruit, col, row) :
+        self._color_fruit=color_fruit
+        self._col=col
+        self._row=row
+        self._tiles=[Tile(self._row, self._col,self._color_fruit)]
 
-class Fruit :
-
-    def __init__(self, color_fruit, col, line,size) :
-        self.color_fruit=color_fruit
-        self.col=col
-        self.line=line
-        self.size=size
     
-    def __contains__(self, snake) : # on testera if snake in fruit
-       return snake==[self.line, self.col]
-    
-    def draw(self, screen) :
-        fruit=Tiles(self.color_fruit, self.size, self.col, self.line)
-        fruit.draw(screen)
-    
-    def collusion(self, snake, pos_1, pos_2, screen,score) :
-        if [self.line, self.col] in snake :
-            if [self.line, self.col]==pos_1 :
-                [self.line, self.col]=pos_2
-            else :
-                [self.line, self.col]=pos_1
+    def __contains__(self, snake) : # test if snake contains fruit, prend en arg les positions du snake
+       return snake==[self._row, self._col]
 
-            score+=1
-            #snake.grow(direction)
-            self.draw(screen)
-        
+    @property
+    def tiles(self) :
+        return(self._tiles)
 
-        return score
+    @property
+    def coord(self) :
+        return (self._row, self._col)
+
+
+    def change(self, pos_1, pos_2) :
+        if [self._row, self._col]==pos_1 :
+            [self._row, self._col]=pos_2
+        else :
+            [self._row, self._col]=pos_1
+        self._tiles=[Tile(self._row, self._col, self._color_fruit)]
+
     
 
 
