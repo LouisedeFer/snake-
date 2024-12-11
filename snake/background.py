@@ -1,34 +1,32 @@
-import pygame
 # Initialiser le module
-import argparse
-#Sert a donner des instructions
+#import argparse
 
-from .classes import CheckerBoard, Snake, Fruit
+import pygame
+
+#Sert a donner des instructions
+from .classes import Board, CheckerBoard, Fruit, Snake, Dir
 
 DEFAULT_LINES=20 #Nombre de lignes par defaut
 DEFAULT_COLUMNS=30 #Nombre de colonnes par defaut
 DEFAULT_SIZE= 50# Taille du carre par defaut
-#SNAKE=[3,1]
 
 
-#MIN_H=100 ; MAX_H=700
-#MIN_W=200 ; MAX_W=800
+
 
 
 # lancer le jeu : donner les arguments : poetry run jeu -L valeur -C valeur
-def argu() :
-    parser = argparse.ArgumentParser(description='Width and height of the screen')
-    parser.add_argument('-L','--lines', type=int, default=DEFAULT_LINES,  help="Screen wight (number of columns)")
-    parser.add_argument('-C','--columns', type=int, default=DEFAULT_COLUMNS, help="Screen height (number of lines)")
-    parser.add_argument('-S','--square_size', type=int, default=DEFAULT_SIZE, help="Size of a square")
-    args = parser.parse_args()
+"""#def argu() :
+    parser = argparse.ArgumentParser(description="Width and height of the screen")
+    parser.add_argument("-L","--lines", type=int, default=DEFAULT_LINES,  help="Screen wight (number of columns)")
+    parser.add_argument("-C","--columns", type=int, default=DEFAULT_COLUMNS, help="Screen height (number of lines)")
+    parser.add_argument("-S","--square_size", type=int, default=DEFAULT_SIZE, help="Size of a square")
     #if args.W < MIN_W or args.W>MAX_W:
-     #   raise ValueError("The size (-W argument) must be in [200,800]")
+     #   raise ValueError("The size (-W argument) must be in [200,800]")  # noqa: ERA001
    # if args.H < MIN_H or args.H<MAX_H:
-   #    raise ValueError("The size (-H argument) must be in [100,700]")                    
-    return args
+   #    raise ValueError("The size (-H argument) must be in [100,700]")  # noqa: ERA001
+    return parser.parse_args()
 
-def tracer_noir(screen,size) :
+def tracer_noir(screen,size) -> None:
     args=argu()
 
     color = (0, 0, 0) #on part d"un ecran blanc et on va tracer les carres noirs
@@ -91,6 +89,8 @@ def jeu() :  # plus utile maintenant
 
     pygame.quit()
 
+    """
+
 ## Meilleure version du jeu 
 
 # Function to display the score
@@ -108,42 +108,47 @@ def jeu_bis() :
     colors_2=(255,255,255)
 
     columns=30
-    lines=20
+    rows=20
     size=30
 
-    hauteur=lines*size
-    largeur=columns*size
+    height=rows*size
+    width=columns*size
 
     color_sna=(0,255,0)
-    color_head=(0,0,255)
-    l_sna=10 # ligne de départ du snake
+    #color_head=(0,0,255)
+    r_sna=10 # ligne de départ du snake
     c_sna=5 # colonne de départ (position de la tête)
-    #taille_sna=[3,1]
-    taille_sna=5
+    size_sna=5
     
     speed=5
 
     color_fruit=(255,0,0)
-    pos_fruit_1=[3,3] #line, column
+    pos_fruit_1=[3,3] #row, column
     pos_fruit_2=[10,15]
 
+    direction = Dir.LEFT #the snake starts by moving toward left
 
+    screen = pygame.display.set_mode( (width, height) )
 
-    screen = pygame.display.set_mode( (hauteur, largeur) )
-
-    MyCheckerBoard=CheckerBoard(color_1,colors_2,columns,lines,size)
-    MySnake=Snake(color_sna,color_head,l_sna,c_sna,taille_sna, size)
-    Myfruit=Fruit(color_fruit, pos_fruit_1[1],pos_fruit_1[0], size) # on commence par placer le fruit en position 1
+    MyCheckerBoard=CheckerBoard(color_1,colors_2,rows,columns)
+    MySnake=Snake(color_sna,r_sna,c_sna,size_sna, direction)
+    Myfruit=Fruit(color_fruit, pos_fruit_1[1],pos_fruit_1[0]) # on commence par placer le fruit en position 1
     
-    direction = 'LEFT' # le serpent va commencer par se déplacer vers la gauche
+
 
     score=0
+
+
+    board=Board(screen=screen, tile_size=size)
+    board.add_object(MyCheckerBoard) # the order matters ! checkerboard first
+    board.add_object(MySnake)
+    board.add_object(Myfruit)
 
 
     pygame.init()
 
 
-    pygame.display.set_caption(f"Ecran de jeu {score}")
+    
 
 
 
@@ -158,6 +163,7 @@ def jeu_bis() :
 
 
         for event in pygame.event.get():
+            #quit game
             if event.type == pygame.QUIT:
                 game=False
             if event.type == pygame.KEYDOWN : #on precise qu'il s'agit d'un evnt qui concerne le clavier
@@ -166,24 +172,32 @@ def jeu_bis() :
                 
 
                 if event.key==pygame.K_RIGHT :
-                    score=MySnake.move_right_bis(screen, lines, score, Myfruit) #remettre le score à 0 si on touche les bords
-                    direction='RIGHT'
-                    break # permet de ne pas appuyer sur plusieurs touches
-                    
-                if event.key == pygame.K_LEFT :
-                    score=MySnake.move_left_bis(screen, score, Myfruit) 
-                    direction='LEFT'
+                    MySnake.dir=Dir.RIGHT
+                    #score=Myfruit.collusion(MySnake, pos_fruit_1, pos_fruit_2, score)
+                    direction=(0,1)
                     break
                     
+                    
+                if event.key == pygame.K_LEFT :
+                    MySnake.dir=Dir.LEFT
+                    #score=Myfruit.collusion(MySnake, pos_fruit_1, pos_fruit_2, score)
+                    direction=(0,-1)
+                    break
+                
+                    
                 if event.key == pygame.K_UP :
-                    score=MySnake.move_up_bis(screen, score, Myfruit)
-                    direction='UP'
+                    MySnake.dir=Dir.UP
+                    #score=Myfruit.collusion(MySnake, pos_fruit_1, pos_fruit_2, score)
+                    direction=(-1,0)
                     break
                    
                 if event.key == pygame.K_DOWN :
-                    score=MySnake.move_down_bis(screen,columns, score, Myfruit) 
-                    direction = 'DOWN'
+                    MySnake.dir=Dir.DOWN
+                    #score=Myfruit.collusion(MySnake, pos_fruit_1, pos_fruit_2, score)
+                    direction =(1,0)
                     break
+                
+            
    
 
         
@@ -191,14 +205,19 @@ def jeu_bis() :
         #bien laisser la boucle d'evnt avant d'afficher
         
 
-        MyCheckerBoard.tracer(screen)
-        MySnake.draw(screen)
-        Myfruit.draw(screen)
+        #MyCheckerBoard.tracer(screen)
+        #MySnake.draw(screen)
+        #Myfruit.draw(screen)
 
-        MySnake.move_global(direction, screen, columns, lines, score, Myfruit)
-        score=Myfruit.collusion(MySnake, pos_fruit_1, pos_fruit_2, screen, score)
+        score=MySnake.move(Myfruit, score, pos_fruit_1, pos_fruit_2)
+        board.draw()
+
+
+        
+
 
         display_score(screen, score)
+        pygame.display.set_caption(f"Ecran de jeu {score}")
 
 
     
