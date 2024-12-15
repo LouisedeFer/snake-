@@ -1,10 +1,7 @@
-# Initialiser le module
-#import argparse
-
-import pygame
+import pygame  # noqa: D100
 
 #Sert a donner des instructions
-from .classes import Board, CheckerBoard, Fruit, Snake, Dir
+from .classes import Board, CheckerBoard, Dir, Fruit, Snake
 
 DEFAULT_LINES=20 #Nombre de lignes par defaut
 DEFAULT_COLUMNS=30 #Nombre de colonnes par defaut
@@ -91,19 +88,19 @@ def jeu() :  # plus utile maintenant
 
     """
 
-## Meilleure version du jeu 
+## Meilleure version du jeu
 
 # Function to display the score
-
+"""#
 def display_score(screen, score):
     font = pygame.font.Font(None, 40)  # Default font and size
     score_surface = font.render(f'Score: {score}', True, (255, 0, 0))
     screen.blit(score_surface, (10, 10))  # Draw score at (10,10)
 
 
-
-def jeu_bis() : 
-    
+"""
+def jeu_bis() -> None:  # noqa: PLR0915
+    """Code the entire game."""
     color_1=(0,0,0)
     colors_2=(255,255,255)
 
@@ -115,31 +112,31 @@ def jeu_bis() :
     width=columns*size
 
     color_sna=(0,255,0)
-    #color_head=(0,0,255)
+    #color_head=(0,0,255)  # noqa: ERA001
     r_sna=10 # ligne de départ du snake
     c_sna=5 # colonne de départ (position de la tête)
     size_sna=5
-    
+
     speed=5
 
     color_fruit=(255,0,0)
     pos_fruit_1=[3,3] #row, column
-    pos_fruit_2=[10,15]
 
     direction = Dir.LEFT #the snake starts by moving toward left
 
     screen = pygame.display.set_mode( (width, height) )
 
-    MyCheckerBoard=CheckerBoard(color_1,colors_2,rows,columns)
-    MySnake=Snake(color_sna,r_sna,c_sna,size_sna, direction)
-    Myfruit=Fruit(color_fruit, pos_fruit_1[1],pos_fruit_1[0]) # on commence par placer le fruit en position 1
-    
+    MyCheckerBoard=CheckerBoard(color_1,colors_2,rows,columns)  # noqa: N806
+
+    MySnake=Snake.create_from_pos(color_sna, r_sna, c_sna, size_sna, direction)  # noqa: N806
+    Myfruit=Fruit(color_fruit, pos_fruit_1[1],pos_fruit_1[0]) # on commence par placer le fruit en position 1  # noqa: E501, N806
+
 
 
     score=0
 
 
-    board=Board(screen=screen, tile_size=size)
+    board=Board(screen=screen, tile_size=size, nb_rows=rows, nb_cols=columns)
     board.add_object(MyCheckerBoard) # the order matters ! checkerboard first
     board.add_object(MySnake)
     board.add_object(Myfruit)
@@ -148,16 +145,12 @@ def jeu_bis() :
     pygame.init()
 
 
-    
-
-
-
 
     clock = pygame.time.Clock()
 
     #on initialise pour sortir du jeu correctement entre autres
     game=True
-    while game==True:
+    while game is True:
 
         clock.tick(speed)
 
@@ -169,60 +162,46 @@ def jeu_bis() :
             if event.type == pygame.KEYDOWN : #on precise qu'il s'agit d'un evnt qui concerne le clavier
                 if event.key ==pygame.K_q :
                     game=False
-                
+
 
                 if event.key==pygame.K_RIGHT :
                     MySnake.dir=Dir.RIGHT
+                    MySnake.move()
                     #score=Myfruit.collusion(MySnake, pos_fruit_1, pos_fruit_2, score)
-                    direction=(0,1)
-                    break
-                    
-                    
+                    direction=Dir.RIGHT
+                    break #prevent from going immediately back
+
+
                 if event.key == pygame.K_LEFT :
                     MySnake.dir=Dir.LEFT
+                    MySnake.move()
                     #score=Myfruit.collusion(MySnake, pos_fruit_1, pos_fruit_2, score)
-                    direction=(0,-1)
+                    direction=Dir.LEFT
                     break
-                
-                    
+
+
                 if event.key == pygame.K_UP :
                     MySnake.dir=Dir.UP
+                    MySnake.move()
                     #score=Myfruit.collusion(MySnake, pos_fruit_1, pos_fruit_2, score)
-                    direction=(-1,0)
+                    direction=Dir.UP
                     break
-                   
+
                 if event.key == pygame.K_DOWN :
                     MySnake.dir=Dir.DOWN
+                    MySnake.move()
                     #score=Myfruit.collusion(MySnake, pos_fruit_1, pos_fruit_2, score)
-                    direction =(1,0)
+                    direction =Dir.DOWN
                     break
-                
-            
-   
 
-        
-        
         #bien laisser la boucle d'evnt avant d'afficher
-        
 
-        #MyCheckerBoard.tracer(screen)
-        #MySnake.draw(screen)
-        #Myfruit.draw(screen)
 
-        score=MySnake.move(Myfruit, score, pos_fruit_1, pos_fruit_2)
+        score=len(MySnake)
         board.draw()
 
-
-        
-
-
-        display_score(screen, score)
         pygame.display.set_caption(f"Ecran de jeu {score}")
 
-
-    
-
-    
 
 
         pygame.display.update() #afficher a la fin
