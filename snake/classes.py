@@ -61,7 +61,8 @@ class GameObject(Subject, Observer) :
     def __contains__(self, obj:object)-> bool :
         """Define the in for an object."""
         if isinstance(obj, GameObject) :
-            return any(t in obj.tiles for t in self.tiles) # automatiquement sous forme d'iterateur, s'arrete des que True
+            print(list(t.coord in [e.coord for e in obj.tiles] for t in self.tiles))
+            return(any(t.coord in [e.coord for e in obj.tiles] for t in self.tiles)) # automatiquement sous forme d'iterateur, s'arrete des que True
         return False
 
     # on va creer une propriete tiles
@@ -115,16 +116,17 @@ class Board(Subject, Observer) :
         gameobject.detach_obs(self)
         self._object.remove(gameobject)
 
-    def create_fruit(self) -> Fruit :
+    def create_fruit(self) -> None :
         """Create fruits."""
         fruit=None
         while fruit is None or self.detect_collision(fruit) is not None :
             fruit=Fruit(color_fruit=pygame.Color("red"), col=rd.randint(0,self._nb_cols-1), row=rd.randint(0, self._nb_rows-1))  # noqa: E501, S311
+            self.add_object(fruit)
 
     def detect_collision(self, obj : GameObject) -> GameObject | None :
         """Detect wether or not there has been a collision."""
         for o in self._object :
-            if o != obj and not o.background and o in obj :
+            if o != obj and not o.background and obj in o :
                 return o
         return None
 
@@ -147,7 +149,7 @@ class Tile():
     def __init__(self,row : int ,column : int , color : tuple) -> None:
         """Initialize the tile."""
         self._color=color
-        #self.size=size pas utile car la taille est la meme pour tout le monde : on le met dans la classe Board
+        #self.size=size pas utile car la taille est la meme pour tout le monde : on le met dans la classe Board  # noqa: E501
         self._row=row
         self._column=column
 
@@ -176,6 +178,8 @@ class CheckerBoard(GameObject) :
         self._color_2=color_2
         self._nb_rows=nb_rows
         self._nb_columns=nb_columns
+        super().__init__()
+
         #self.size_square=size_square inutile a present
 
     #la fonction pour tracer
@@ -202,6 +206,7 @@ class Snake(GameObject):
         self._tiles=tiles
         self._direction=direction
         self._size=len(self._tiles)
+        super().__init__()
 
     @classmethod
     def create_from_pos(cls, color : tuple,row : int , column : int, size : int, direction : Dir) -> Snake :  # noqa: E501
@@ -209,11 +214,6 @@ class Snake(GameObject):
         tiles=[Tile(row, column+p, color) for p in range(size)]
         return Snake(tiles=tiles, direction=direction)
 
-    """#
-    def __contains__(self, fruit : Fruit)  -> bool:
-    Test if fruit is in snake.
-        return fruit.coord==self._tiles[0].coord
-    """
 
 
     def __len__(self) -> int :
@@ -222,9 +222,9 @@ class Snake(GameObject):
 
 
     @property
-    def tiles (self) -> None :
+    def tiles (self) :
         """Return the list of the tiles."""
-        iter(self._tiles)
+        return(iter(self._tiles))
 
     @property
     def dir(self) -> Dir:
@@ -270,15 +270,16 @@ class Fruit(GameObject) :
         self._col=col
         self._row=row
         self._tiles=[Tile(self._row, self._col,self._color_fruit)]
+        super().__init__()
 
 
     """#def __contains__(self, snake: ) : # test if snake contains fruit, prend en arg les positions du snake
        return snake==[self._row, self._col]"""
 
     @property
-    def tiles(self) -> None:
+    def tiles(self):
         """Return the tiles."""
-        iter(self._tiles)
+        return(iter(self._tiles))
 
     @property
     def coord(self)->tuple :

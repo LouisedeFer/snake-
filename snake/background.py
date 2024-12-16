@@ -166,31 +166,22 @@ def jeu_bis() -> None:  # noqa: PLR0915
 
                 if event.key==pygame.K_RIGHT :
                     MySnake.dir=Dir.RIGHT
-                    MySnake.move()
-                    #score=Myfruit.collusion(MySnake, pos_fruit_1, pos_fruit_2, score)
                     direction=Dir.RIGHT
                     break #prevent from going immediately back
 
 
                 if event.key == pygame.K_LEFT :
                     MySnake.dir=Dir.LEFT
-                    MySnake.move()
-                    #score=Myfruit.collusion(MySnake, pos_fruit_1, pos_fruit_2, score)
                     direction=Dir.LEFT
                     break
 
 
                 if event.key == pygame.K_UP :
                     MySnake.dir=Dir.UP
-                    MySnake.move()
-                    #score=Myfruit.collusion(MySnake, pos_fruit_1, pos_fruit_2, score)
-                    direction=Dir.UP
                     break
 
                 if event.key == pygame.K_DOWN :
                     MySnake.dir=Dir.DOWN
-                    MySnake.move()
-                    #score=Myfruit.collusion(MySnake, pos_fruit_1, pos_fruit_2, score)
                     direction =Dir.DOWN
                     break
 
@@ -198,7 +189,9 @@ def jeu_bis() -> None:  # noqa: PLR0915
 
 
         score=len(MySnake)
+        MySnake.move()
         board.draw()
+
 
         pygame.display.set_caption(f"Ecran de jeu {score}")
 
