@@ -163,24 +163,21 @@ def jeu_bis() -> None:  # noqa: PLR0915
                 if event.key ==pygame.K_q :
                     game=False
 
-
-                if event.key==pygame.K_RIGHT :
+                if event.key==pygame.K_RIGHT and MySnake.dir != Dir.LEFT: # not going back 
                     MySnake.dir=Dir.RIGHT
                     direction=Dir.RIGHT
                     break #prevent from going immediately back
 
-
-                if event.key == pygame.K_LEFT :
+                if event.key == pygame.K_LEFT and MySnake.dir != Dir.RIGHT :
                     MySnake.dir=Dir.LEFT
                     direction=Dir.LEFT
                     break
 
-
-                if event.key == pygame.K_UP :
+                if event.key == pygame.K_UP and MySnake.dir != Dir.DOWN :
                     MySnake.dir=Dir.UP
                     break
 
-                if event.key == pygame.K_DOWN :
+                if event.key == pygame.K_DOWN and MySnake.dir != Dir.UP:
                     MySnake.dir=Dir.DOWN
                     direction =Dir.DOWN
                     break
@@ -193,7 +190,7 @@ def jeu_bis() -> None:  # noqa: PLR0915
         board.draw()
 
 
-        pygame.display.set_caption(f"Ecran de jeu {score}")
+        pygame.display.set_caption(f"Score {score-5}")
 
 
 

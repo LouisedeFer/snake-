@@ -3,6 +3,7 @@ from __future__ import annotations  # noqa: D100
 import abc
 import random as rd
 from enum import Enum
+from typing import Iterable  # noqa: UP035
 
 import pygame
 
@@ -61,17 +62,15 @@ class GameObject(Subject, Observer) :
     def __contains__(self, obj:object)-> bool :
         """Define the in for an object."""
         if isinstance(obj, GameObject) :
-            print(list(t.coord in [e.coord for e in obj.tiles] for t in self.tiles))
-            return(any(t.coord in [e.coord for e in obj.tiles] for t in self.tiles)) # automatiquement sous forme d'iterateur, s'arrete des que True
+            return(any(t.coord in [e.coord for e in obj.tiles] for t in self.tiles)) # automatiquement sous forme d'iterateur, s'arrete des que True  # noqa: E501
         return False
 
     # on va creer une propriete tiles
-
     @property # fait voir la fonction comme un attribut
-    @abc.abstractmethod # cette methode est une methode abstraite : elle n'a pas d'implementation
-    def tiles(self) -> None :
+    @abc.abstractmethod # cette methode est une methode abstraite : elle n'a pas d'implementation  # noqa: E501
+    def tiles(self) -> Iterable[Tile] :
         """Create the tiles'property."""
-        raise NotImplementedError # tout objet heritant de gameobject doit definir une propriete utile
+        raise NotImplementedError # tout objet heritant de gameobject doit definir une propriete utile  # noqa: E501
 
     @property
     def background(self) -> bool :
@@ -92,7 +91,7 @@ class Dir(Enum) :
 class Board(Subject, Observer) :
     """Define the board used to draw globally."""
 
-    def __init__(self, screen : pygame.Surface, tile_size : int, nb_rows : int, nb_cols : int)-> None : # on va devoir dessiner donc on rentre un screen  # noqa: D107
+    def __init__(self, screen : pygame.Surface, tile_size : int, nb_rows : int, nb_cols : int)-> None : # on va devoir dessiner donc on rentre un screen  # noqa: D107, E501
         self._screen=screen
         self._tile_size=tile_size
         self._object : list[object]=[]# to have snake, board, fruit
@@ -152,6 +151,7 @@ class Tile():
         #self.size=size pas utile car la taille est la meme pour tout le monde : on le met dans la classe Board  # noqa: E501
         self._row=row
         self._column=column
+        super().__init__()
 
     def __repr__(self) -> str:
         """Represent what a tile consists of."""
@@ -165,7 +165,7 @@ class Tile():
 
     def draw(self, screen : pygame.Surface, tile_size : int) -> None:
         """Draw the tiles."""
-        rect = pygame.Rect(self._column*tile_size, self._row*tile_size, tile_size, tile_size)
+        rect = pygame.Rect(self._column*tile_size, self._row*tile_size, tile_size, tile_size)  # noqa: E501
         pygame.draw.rect(screen, self._color, rect)
 
 
@@ -190,7 +190,7 @@ class CheckerBoard(GameObject) :
         return True
 
     @property
-    def tiles(self)-> None : # type: ignore  # noqa: PGH003
+    def tiles(self)-> None: # type: ignore  # noqa: PGH003
         """Generate the tiles."""
         for column in range(self._nb_columns) :
             for row in range(self._nb_rows) :
@@ -222,7 +222,7 @@ class Snake(GameObject):
 
 
     @property
-    def tiles (self) :
+    def tiles (self) -> Iterable[Tile] :
         """Return the list of the tiles."""
         return(iter(self._tiles))
 
@@ -273,11 +273,8 @@ class Fruit(GameObject) :
         super().__init__()
 
 
-    """#def __contains__(self, snake: ) : # test if snake contains fruit, prend en arg les positions du snake
-       return snake==[self._row, self._col]"""
-
     @property
-    def tiles(self):
+    def tiles(self)-> Iterable[Tile]:
         """Return the tiles."""
         return(iter(self._tiles))
 
@@ -286,11 +283,3 @@ class Fruit(GameObject) :
         """Return the coordonates of the fruit."""
         return (self._row, self._col)
 
-
-    """#def change(self, pos_1, pos_2) :
-        if [self._row, self._col]==pos_1 :
-            [self._row, self._col]=pos_2
-        else :
-            [self._row, self._col]=pos_1
-        self._tiles=[Tile(self._row, self._col, self._color_fruit)]
-        """
